@@ -4,11 +4,10 @@
 # @Time: 2021/8/27
 
 # 系统包
-import time
 import json
 
 # 自定义包
-from timing_task.task_mapper import *
+from timing_task.mapper import *
 from common import *
 from timing_task import *
 
@@ -20,10 +19,17 @@ def get_title_kw_from_land_page():
     """
     log.info("........开始分析着陆页")
 
-    result_company_ids = queryBySQL_sqlal(S_COMID_BY_NOT_QUALITY, {})
+    result_company_ids = queryBySQL_sqlal(CcsActiveCustomerMapper.S_COMID_BY_NOT_QUALITY, {})
     for company_id_dict in result_company_ids:
         company_id = company_id_dict.get("company_id")
         log.info(company_id)
+        # 判断该comID是否已存在
+        count1_list = queryBySQL_sqlal(CcsTraceTitleMapper.S_COUNT_BY_COMID, {"company_id":company_id})
+        count1 = count1_list[0].get("count")
+
+        if int(count1) > 0:
+            continue
+
         get_talk_info_send = post(GET_TALK_INFO, data={"company_id":company_id})
         get_talk_info_response = json.loads(get_talk_info_send)
         # print(get_talk_info_response)
@@ -34,10 +40,24 @@ def get_title_kw_from_land_page():
             for date_dict in data_list:
                 land_page = date_dict.get("land_page")
                 if not str_is_None(land_page):
+                    print(land_page)
+                    domain_name = str(land_page).split('/')[2]
+
+                    # 判断该着陆页域名是否已经存在
+                    count2_list = queryBySQL_sqlal(CcsTraceTitleMapper.S_COUNT_BY_COMID_AND_TRACE,
+                                                   {"company_id": company_id, "trace": domain_name})
+                    count2 = count2_list[0].get("count")
+                    if int(count2) > 0:
+                        continue
+
                     title, description, keywords = url_analysis(land_page)
                     log.info(title)
                     log.info(description)
                     log.info(keywords)
+
+                    # 插入数据表
+                    param_dict = {"trace":land_page, "title":title, "description":description, "keywords":keywords, "company_id":company_id}
+                    l1 = executeBySQL_sqlal(CcsTraceTitleMapper.I_CCS_TRACE_TITLE, param_dict)
 
         else:
             ''

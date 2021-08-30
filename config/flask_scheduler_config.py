@@ -21,7 +21,7 @@ class FlaskSchedulerConfig(object):
             'month': '*',
             'day': '*',
             'hour': '*',
-            'minute': 35,
+            'minute': 54,
             'second': 0
         }
     ]
