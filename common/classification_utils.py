@@ -7,13 +7,13 @@
 import jieba
 from sklearn.preprocessing import LabelEncoder
 from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.naive_bayes import MultinomialNB
+from sklearn.naive_bayes import MultinomialNB, GaussianNB, BernoulliNB
 from sklearn import metrics
 
 # 自定义包
 
 
-class MyClass(object):
+class MyMultinomialNB(object):
     def __init__(self, stop_list):
         # alpga表示平滑参数，越小越容易造成过拟合；越大越容易欠拟合。
         # 拉普拉斯或利德斯通平滑的参数λ ，如果设置为0则表示完全没有平滑选项。但是需要注意的是，平滑相当于人为给概率加上一些噪音，因此λ \lambdaλ设置得越大，多项式朴素贝叶斯的精确性会越低（虽然影响不是非常大）。
@@ -28,7 +28,7 @@ class MyClass(object):
         :param y_train: 标识集，需有序列表
         :param x_test: 测试集
         :param y_test: 测试标识集
-        :return:
+        :return: 准确率,混淆矩阵,召回率
         """
         # 中文分词
         x_train_cut = self.text_jieba(x_train)
@@ -49,9 +49,10 @@ class MyClass(object):
         score = metrics.accuracy_score(y_test_le, y_pred_model)  # 准确率
         matrix = metrics.confusion_matrix(y_test_le, y_pred_model)  # 混淆矩阵
         report = metrics.classification_report(y_test_le, y_pred_model)  # 召回率
-        print('>>>准确率\n', score)
-        print('\n>>>混淆矩阵\n', matrix)
-        print('\n>>>召回率\n', report)
+        # print('>>>准确率\n', score)
+        # print('\n>>>混淆矩阵\n', matrix)
+        # print('\n>>>召回率\n', report)
+        return score, matrix, report
 
     def predict(self, msg):
         """
@@ -74,3 +75,6 @@ class MyClass(object):
         x_word = [jieba.cut(words) for words in x_text]
         x_cut = [' '.join(word) for word in x_word]
         return x_cut
+
+
+

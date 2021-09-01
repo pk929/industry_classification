@@ -8,20 +8,33 @@ from apscheduler.jobstores.memory import MemoryJobStore
 
 # 自定义包
 from timing_task.land_page_task import *
+from timing_task.industry_quality_inspection_task import *
 
-
+#
 class FlaskSchedulerConfig(object):
     JOBS = [
+        # {
+        #     'id': 'get_title_kw_from_land_page',  # 任务标识，必须唯一
+        #     'func': get_title_kw_from_land_page,
+        #     'args': None,
+        #     'trigger': 'cron',
+        #     'year': '*',
+        #     'month': '*',
+        #     'day': '*',
+        #     'hour': '*',
+        #     'minute': 54,
+        #     'second': 0
+        # },
         {
-            'id': 'get_title_kw_from_land_page',  # 任务标识，必须唯一
-            'func': get_title_kw_from_land_page,
+            'id': 'industry_quality_inspection_task',  # 任务标识，必须唯一
+            'func': industry_quality_inspection_task,
             'args': None,
             'trigger': 'cron',
             'year': '*',
-            'month': '*',
-            'day': '*',
-            'hour': '*',
-            'minute': 54,
+            'month': 9,
+            'day': 1,
+            'hour': 17,
+            'minute': 55,
             'second': 0
         }
     ]

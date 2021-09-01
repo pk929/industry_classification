@@ -22,7 +22,7 @@ def get_title_kw_from_land_page():
         result_company_ids = queryBySQL_sqlal(CcsActiveCustomerMapper.S_COMID_BY_NOT_QUALITY, {})
         for company_id_dict in result_company_ids:
             company_id = company_id_dict.get("company_id")
-            log.info(company_id)
+            # log.info(company_id)
             # 判断该comID是否已存在
             count1_list = queryBySQL_sqlal(CcsTraceTitleMapper.S_COUNT_BY_COMID, {"company_id":company_id})
             count1 = count1_list[0].get("count")

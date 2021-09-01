@@ -47,3 +47,31 @@ def str_is_None(st):
         return True
     return False
 
+
+def stopwordslist(filepath):
+    """
+    读取停用词
+    :param filepath:
+    :return:
+    """
+    stopwords = []
+
+    try:
+        stopwords = [line.strip() for line in open(filepath, 'r', encoding='utf-8').readlines()]
+    except Exception as e:
+        log.error('utils_stopwordslist_e:' + str(e))
+    finally:
+        return stopwords
+
+
+def check_contain_chinese(check_str):
+    """
+    判断文本中是否含有中文字符
+    :param check_str:
+    :return:
+    """
+    for ch in check_str.encode('utf-8').decode('utf-8'):
+        if u'\u4e00' <= ch <= u'\u9fff':
+            return True
+    return False
+
