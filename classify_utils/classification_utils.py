@@ -64,7 +64,7 @@ class MyMultinomialNB(object):
         msg_count = self.count.transform(msg_cut).toarray()
         result = self.model.predict(msg_count)[0]
         result_proba = self.model.predict_proba(msg_count)[0][result]
-        return result, result_proba
+        return str(result), str(result_proba)
 
     def text_jieba(self, x_text):
         """

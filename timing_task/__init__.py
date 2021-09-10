@@ -11,3 +11,6 @@ from config.ini_config import Config
 
 GET_HISTORY_MSG = Config.get_value('http-info', 'get_history_msg')
 GET_TALK_INFO = Config.get_value('http-info', 'get_talk_info')
+
+
+print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")

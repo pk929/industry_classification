@@ -31,5 +31,6 @@ scheduler.start()
 manager.add_command('runserver', init_runserver())
 
 if __name__ == '__main__':
+
     manager.run()
 

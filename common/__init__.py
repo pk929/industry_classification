@@ -10,4 +10,3 @@ from common.flask_log import Log as log
 from common.request_utils import *
 from common.db_utils import *
 from common.utils import *
-from common.classification_utils import MyMultinomialNB

@@ -4,13 +4,14 @@
 # @Time: 2021/8/27
 
 # 系统包
-from urllib import request
+from urllib import request as URLrequest
 from bs4 import BeautifulSoup
 from urllib.parse import quote
 import string
 
 # 自定义包
 from common.flask_log import Log as log
+
 
 def url_analysis(url):
     """
@@ -21,7 +22,7 @@ def url_analysis(url):
     title, description, keywords = "", "", ""
     try:
         url = quote(url, safe=string.printable)
-        page = request.urlopen(url)
+        page = URLrequest.urlopen(url)
         contents = page.read()
         soup = BeautifulSoup(contents, "html.parser")
         title = str(soup.title.string)
@@ -70,8 +71,10 @@ def check_contain_chinese(check_str):
     :param check_str:
     :return:
     """
-    for ch in check_str.encode('utf-8').decode('utf-8'):
-        if u'\u4e00' <= ch <= u'\u9fff':
-            return True
+    try:
+        for ch in check_str.encode('utf-8').decode('utf-8'):
+            if u'\u4e00' <= ch <= u'\u9fff':
+                return True
+    except Exception as e:
+        return False
     return False
-

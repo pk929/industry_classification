@@ -18,7 +18,10 @@ from config.ini_config import Config
 from application.flask_config import FlaskConfig
 from common.flask_log import Log
 from config.flask_scheduler_config import FlaskSchedulerConfig
+from common import *
 
+from classify_utils.industry_title_model import get_industry_title_model
+from classify_utils.industry_keyword_model import get_industry_keyword_model
 
 baseConfig = Config()
 flask_config = FlaskConfig()
@@ -50,3 +53,17 @@ def init_runserver():
                   threaded=Config.strToBool(baseConfig.get_value('flask-runserver', 'threaded')),
                   passthrough_errors=Config.strToBool(baseConfig.get_value('flask-runserver', 'passthrough_errors'))
                   )
+
+
+__stop_list = stopwordslist("text_similarity_modular/date/stopWord.txt")
+
+# 加载行业标题列表
+
+# 加载行业关键词列表
+
+
+# 加载标题分类算法模型
+industry_title_model = get_industry_title_model(__stop_list)
+
+# 加载行业关键词分类算法
+industry_keyword_model = get_industry_keyword_model([])
