@@ -5,13 +5,11 @@
 
 # 系统包
 import random
-import time
-
 
 # 自定义包
-from timing_task.mapper import *
 from common import *
 from classify_utils.classification_utils import *
+from mapper import *
 
 
 def __train_network_model(model):
@@ -38,8 +36,8 @@ def __train_network_model(model):
         if industry_id not in y_test:
             x_test.append(trace_title)
             y_test.append(industry_id)
-    label_list = list(set(y_train)).sort()
-
+    label_list = list(set(y_train))
+    label_list.sort()
 
     y_train_len = len(y_train)
     random_list = random.sample(range(0, y_train_len), int(y_train_len / 4))  # 随机取1/3数据测试
@@ -48,7 +46,7 @@ def __train_network_model(model):
         y_test.append(y_train[ra])
 
     # 数据集准备完毕
-    score = model.train_network_model(x_train, y_train, x_test, y_test)
+    score = model.train_network_model(label_list=label_list, x_train=x_train, y_train=y_train, x_test=x_test, y_test=y_test)
     end_time = time.time()
     log.info("准确率:")
     log.info(score)
@@ -79,14 +77,16 @@ def __train_industry_title_model(model):
         if industry_id not in y_test:
             x_test.append(trace_title)
             y_test.append(industry_id)
-    label_list = list(set(y_train)).sort()
+
+    label_list = list(set(y_train))
+    label_list.sort()
     y_train_len = len(y_train)
     random_list = random.sample(range(0, y_train_len), int(y_train_len / 4))  # 随机取1/3数据测试
     for ra in random_list:
         x_test.append(x_train[ra])
         y_test.append(y_train[ra])
 
-    score, matrix, report = model.train_model(x_train, y_train, x_test, y_test)
+    score, matrix, report = model.train_model(label_list=label_list, x_train=x_train, y_train=y_train, x_test=x_test, y_test=y_test)
     end_time = time.time()
     log.info("准确率:")
     log.info(score)
@@ -107,7 +107,9 @@ def get_industry_title_model(stop_list):
     :param stop_list: 停用词列表
     :return:
     """
-    model = MultinomialNB(alpha=0.001)
+    # model = MultinomialNB(alpha=0.001)  # 多项式朴素贝叶斯
+    model = RandomForestClassifier()
+
     myClassificationModel = MyClassificationModel(model=model, stop_list=stop_list)
     __train_industry_title_model(model=myClassificationModel)
     return myClassificationModel

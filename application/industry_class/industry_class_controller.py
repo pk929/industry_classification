@@ -10,7 +10,9 @@ from flask import request
 from application.industry_class import industry_class
 from application.result_json import *
 from common.flask_log import Log as log
-# from application import industry_title_model, industry_keyword_model
+from application.industry_class.industry_class_service import *
+from application import industry_title_model
+# from application import industry_keyword_model
 
 @industry_class.route('/', methods=['GET', 'POST'])
 def index():
@@ -35,15 +37,24 @@ def test():
     return return_success({})
 
 
-@industry_class.route('/keyword', methods=['POST'])
-def keyword():
+@industry_class.route('/testTitleMsg', methods=['POST'])
+def testTitleMsg():
     msg = request.values.get("msg")
     if str_is_None(msg):
         return return_fail("数据为空")
-    # result, result_proba = industry_keyword_model.predict(msg)
-    # result_dict = {"result": result, "result_proba": result_proba}
-    #
-    # log.info(msg)
-    # log.info(result_dict)
-    # return return_success(result_dict)
-    return return_success({})
+    result, result_proba = industry_title_model.predict(msg)
+    result_dict = {"result": result, "result_proba": result_proba}
+
+    log.info(msg)
+    log.info(result_dict)
+    return return_success(result_dict)
+
+
+@industry_class.route('/classify', methods=['POST'])
+def classify():
+    company_id = request.values.get("company_id")
+    if str_is_None(company_id):
+        return return_fail("参数错误")
+    ret_data = get_classify(company_id=company_id)
+
+    return return_success(ret_data)

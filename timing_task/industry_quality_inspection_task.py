@@ -4,12 +4,8 @@
 # @Time: 2021/9/1
 
 # 系统包
-import random
-import time
 
 # 自定义包
-from timing_task.mapper import *
-from common import *
 
 
 # import warnings

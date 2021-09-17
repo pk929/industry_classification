@@ -6,8 +6,8 @@
 # 系统包
 
 # 自定义包
-from timing_task.mapper import *
 from common import *
+from mapper import *
 
 
 def load_industry_title_data():

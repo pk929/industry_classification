@@ -7,10 +7,9 @@
 import random
 
 # 自定义包
-from timing_task.mapper import *
 from common import *
 from classify_utils.classification_utils import *
-
+from mapper import *
 
 def __train_keyword_network_model(model):
     """
@@ -37,8 +36,8 @@ def __train_keyword_network_model(model):
         if industry_id not in y_test:
             x_test.append(key_word)
             y_test.append(industry_id)
-    label_list = list(set(y_train)).sort()
-
+    label_list = list(set(y_train))
+    label_list.sort()
     y_train_len = len(y_train)
     random_list = random.sample(range(0, y_train_len), int(y_train_len / 4))  # 随机取1/3数据测试
     for ra in random_list:
@@ -46,7 +45,7 @@ def __train_keyword_network_model(model):
         y_test.append(y_train[ra])
 
     # 数据集准备完毕
-    score = model.train_network_model(x_train, y_train, x_test, y_test)
+    score = model.train_network_model(label_list=label_list, x_train=x_train, y_train=y_train, x_test=x_test, y_test=y_test)
     end_time = time.time()
     log.info("准确率:")
     log.info(score)
@@ -89,7 +88,8 @@ def __train_industry_keyword_model(model):
     log.info("keyword_3:" + str(time.time()))
 
     # 标签列表
-    label_list = list(set(y_train)).sort()
+    label_list = list(set(y_train))
+    label_list.sort()
     y_train_len = len(y_train)
     random_list = random.sample(range(0, y_train_len), int(y_train_len / 4))  # 随机取1/3数据测试
     for ra in random_list:
@@ -97,7 +97,7 @@ def __train_industry_keyword_model(model):
         y_test.append(y_train[ra])
 
     log.info("keyword_4:" + str(time.time()))
-    score, matrix, report = model.train_model(x_train, y_train, x_test, y_test)
+    score, matrix, report = model.train_model(label_list=label_list, x_train=x_train, y_train=y_train, x_test=x_test, y_test=y_test)
     log.info("keyword_5:" + str(time.time()))
 
     end_time = time.time()
@@ -128,51 +128,53 @@ def my_keyword_model_test(stop_list):
     :param stop_list:
     :return:
     """
-    log.info("_____________1-k近邻算法")
-    knc = KNeighborsClassifier()
-    knc_model = MyClassificationModel(model=knc, stop_list=stop_list)
-    __train_industry_keyword_model(model=knc_model)
-
-    log.info("_____________2决策树")
-    dtc = DecisionTreeClassifier()
-    dtc_model = MyClassificationModel(model=dtc, stop_list=stop_list)
-    __train_industry_keyword_model(model=dtc_model)
-
-    log.info("_____________3多层感知器")
-    mlpc = MLPClassifier()
-    mlpc_model = MyClassificationModel(model=mlpc, stop_list=stop_list)
-    __train_industry_keyword_model(model=mlpc_model)
-
-    log.info("_____________4伯努力贝叶斯算法")
-    bnb = BernoulliNB()
-    bnb_model = MyClassificationModel(model=bnb, stop_list=stop_list)
-    __train_industry_keyword_model(model=bnb_model)
-
-    log.info("_____________5高斯贝叶斯")
-    gnb = GaussianNB()
-    gnb_model = MyClassificationModel(model=gnb, stop_list=stop_list)
-    __train_industry_keyword_model(model=gnb_model)
-
-    log.info("_____________6多项式朴素贝叶斯")
-    mnb = MultinomialNB(alpha=0.001)
-    mnb_model = MyClassificationModel(model=mnb, stop_list=stop_list)
-    __train_industry_keyword_model(model=mnb_model)
-
-    log.info("_____________7逻辑回归算法")
-    lgr = LogisticRegression()
-    lgr_model = MyClassificationModel(model=lgr, stop_list=stop_list)
-    __train_industry_keyword_model(model=lgr_model)
-
-    log.info("_____________8支持向量机算法")
-    svc = svm.SVC()
-    svc_model = MyClassificationModel(model=svc, stop_list=stop_list)
-    __train_industry_keyword_model(model=svc_model)
+    # log.info("_____________1-k近邻算法")
+    # knc = KNeighborsClassifier()
+    # knc_model = MyClassificationModel(model=knc, stop_list=stop_list)
+    # __train_industry_keyword_model(model=knc_model)
+    #
+    # log.info("_____________2决策树")
+    # dtc = DecisionTreeClassifier()
+    # dtc_model = MyClassificationModel(model=dtc, stop_list=stop_list)
+    # __train_industry_keyword_model(model=dtc_model)
+    #
+    # log.info("_____________3多层感知器")
+    # mlpc = MLPClassifier()
+    # mlpc_model = MyClassificationModel(model=mlpc, stop_list=stop_list)
+    # __train_industry_keyword_model(model=mlpc_model)
+    #
+    # log.info("_____________4伯努力贝叶斯算法")
+    # bnb = BernoulliNB()
+    # bnb_model = MyClassificationModel(model=bnb, stop_list=stop_list)
+    # __train_industry_keyword_model(model=bnb_model)
+    #
+    # log.info("_____________5高斯贝叶斯")
+    # gnb = GaussianNB()
+    # gnb_model = MyClassificationModel(model=gnb, stop_list=stop_list)
+    # __train_industry_keyword_model(model=gnb_model)
+    #
+    # log.info("_____________6多项式朴素贝叶斯")
+    # mnb = MultinomialNB(alpha=0.001)
+    # mnb_model = MyClassificationModel(model=mnb, stop_list=stop_list)
+    # __train_industry_keyword_model(model=mnb_model)
 
     log.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     log.info("_____________9随机森林算法")
     rfc = RandomForestClassifier()
     rfc_model = MyClassificationModel(model=rfc, stop_list=stop_list)
     __train_industry_keyword_model(model=rfc_model)
+
+    log.info("_____________7逻辑回归算法")
+    lgr = LogisticRegression()
+    lgr_model = MyClassificationModel(model=lgr, stop_list=stop_list)
+    __train_industry_keyword_model(model=lgr_model)
+
+    # log.info("_____________8支持向量机算法")
+    # svc = svm.SVC()
+    # svc_model = MyClassificationModel(model=svc, stop_list=stop_list)
+    # __train_industry_keyword_model(model=svc_model)
+
+
 
     log.info("_____________10自增强算法")
     abc = AdaBoostClassifier()
@@ -190,3 +192,5 @@ def my_keyword_model_test2(stop_list):
     network = models.Sequential()
     network_model = MyClassificationModel(model=network, stop_list=stop_list)
     __train_keyword_network_model(network_model)
+
+

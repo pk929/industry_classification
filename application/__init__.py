@@ -62,12 +62,17 @@ __stop_list = stopwordslist("text_similarity_modular/date/stopWord.txt")
 # 加载行业关键词列表
 
 
+# 加载行业关键词分类算法
+my_keyword_model_test2(__stop_list)
+my_keyword_model_test(__stop_list)
+# industry_keyword_model = get_industry_keyword_model(__stop_list)
+
+
 # 加载标题分类算法模型
-industry_title_model = get_industry_title_model(__stop_list)
 # my_industry_model_test(__stop_list)
 # my_industry_model_test2(__stop_list)
+industry_title_model = get_industry_title_model(__stop_list)
 
-# 加载行业关键词分类算法
-industry_keyword_model = get_industry_keyword_model(__stop_list)
-my_keyword_model_test(__stop_list)
-my_keyword_model_test2(__stop_list)
+
+
+

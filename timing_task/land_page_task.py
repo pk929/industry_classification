@@ -7,9 +7,9 @@
 import json
 
 # 自定义包
-from timing_task.mapper import *
 from common import *
 from timing_task import *
+from mapper import *
 
 
 def get_title_kw_from_land_page():

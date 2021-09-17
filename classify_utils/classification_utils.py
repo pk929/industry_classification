@@ -39,16 +39,20 @@ class MyClassificationModel(object):
         self.model = model
         # 文本数据转换成数据值数据矩阵
         self.count = CountVectorizer(stop_words=stop_list)
+        # 标签列表
+        self.label_list = []
 
-    def train_network_model(self, x_train, y_train, x_test, y_test):
+    def train_network_model(self, label_list, x_train, y_train, x_test, y_test):
         """
         训练神经网络模型
+        :param label_list: 标签列表
         :param x_train: 训练集
         :param y_train: 标识集，需有序列表
         :param x_test: 测试集
         :param y_test: 测试标识集
         :return:
         """
+        self.label_list = label_list
         # 中文分词
         x_train_cut = self.text_jieba(x_train)
         x_test_cut = self.text_jieba(x_test)
@@ -112,15 +116,17 @@ class MyClassificationModel(object):
                                     batch_size=32)
         return score[1]
 
-    def train_model(self, x_train, y_train, x_test, y_test):
+    def train_model(self, label_list, x_train, y_train, x_test, y_test):
         """
         训练模型
+        :param label_list: 标签列表
         :param x_train: 训练集
         :param y_train: 标识集，需有序列表
         :param x_test: 测试集
         :param y_test: 测试标识集
         :return: 准确率,混淆矩阵,召回率
         """
+        self.label_list = label_list
         # 中文分词
         x_train_cut = self.text_jieba(x_train)
         x_test_cut = self.text_jieba(x_test)
@@ -149,13 +155,15 @@ class MyClassificationModel(object):
         """
         预测分类
         :param msg:
-        :return: 返回标签下标及概率
+        :return: 返回标签及概率
         """
         msg_cut = self.text_jieba([msg])
         msg_count = self.count.transform(msg_cut).toarray()
         result = self.model.predict(msg_count)[0]
         result_proba = self.model.predict_proba(msg_count)[0][result]
-        return str(result), str(result_proba)
+
+        result_label = self.label_list[int(result)]
+        return result_label, str(result_proba)
 
     def text_jieba(self, x_text):
         """
