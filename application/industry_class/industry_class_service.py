@@ -18,18 +18,17 @@ def get_classify(company_id):
     :return:
     """
     re = {"type": "no", "industry_id": None, "similarity": None}
-    industry_title_list = list()
+    industry_title_dict = dict()
     a_dict = dict()
     b_dict = dict()
     try:
         # 查询该公司的标题数据
         result_titles = queryBySQL_sqlal(CcsTraceTitleMapper.S_CCS_TRACE_TITLE_BY_COMPANY_ID, {"company_id": company_id})
-        industry_title_len = len(result_titles)
 
         for result_title_dict in result_titles:
             title = result_title_dict.get("title")
             result_label, result_proba = industry_title_model.predict(title)
-            print({"industry_id": result_label, "similarity": result_proba})
+            log.info({"industry_id": result_label, "similarity": result_proba})
             if float(result_proba) > 0.5:
                 if result_label in a_dict.keys():
                     a_dict[result_label] = float(a_dict.get(result_label)) + float(result_proba)
@@ -37,8 +36,13 @@ def get_classify(company_id):
                 else:
                     a_dict[result_label] = float(result_proba)
                     b_dict[result_label] = 1
-        print(a_dict)
-        print(b_dict)
+        log.info(a_dict)
+        log.info(b_dict)
+        for key in a_dict.keys():
+            a_sim = a_dict.get(key)
+            b_len = b_dict.get(key)
+            industry_title_dict[key] = a_sim / b_len
+
     except Exception as e:
         log.error_ex(str(e))
-    return a_dict
+    return industry_title_dict

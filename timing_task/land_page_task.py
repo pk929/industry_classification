@@ -61,4 +61,3 @@ def get_title_kw_from_land_page():
     except Exception as e:
         log.error_ex("get_title_kw_from_land_page_e:" + str(e))
 
-

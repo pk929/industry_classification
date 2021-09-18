@@ -1,24 +1,12 @@
 # -*- ecoding: utf-8 -*-
 # @Function: <>
 # @Author: pkuokuo
-# @Time: 2021/8/31
+# @Time: 2021/9/18
 
 # 系统包
 import jieba
-from sklearn.preprocessing import LabelEncoder
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.naive_bayes import MultinomialNB, GaussianNB, BernoulliNB
-from sklearn import metrics
 
-from sklearn.neural_network import MLPClassifier
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.naive_bayes import BernoulliNB
-from sklearn.naive_bayes import GaussianNB
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.ensemble import AdaBoostClassifier
+
 from sklearn.preprocessing import LabelEncoder
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn import svm
@@ -28,10 +16,21 @@ from keras import models
 from keras import layers
 from keras.utils.np_utils import to_categorical
 
+
 # 自定义包
 
+def text_jieba(x_text):
+    """
+    对数据进行jieba分词
+    :param x_text:
+    :return:
+    """
+    x_word = [jieba.cut(words) for words in x_text]
+    x_cut = [' '.join(word) for word in x_word]
+    return x_cut
 
-class MyClassificationModel(object):
+
+class MyClassificationNetworkModel(object):
     def __init__(self, model, stop_list):
         # alpga表示平滑参数，越小越容易造成过拟合；越大越容易欠拟合。
         # 拉普拉斯或利德斯通平滑的参数λ ，如果设置为0则表示完全没有平滑选项。但是需要注意的是，平滑相当于人为给概率加上一些噪音，因此λ \lambdaλ设置得越大，多项式朴素贝叶斯的精确性会越低（虽然影响不是非常大）。
@@ -54,8 +53,8 @@ class MyClassificationModel(object):
         """
         self.label_list = label_list
         # 中文分词
-        x_train_cut = self.text_jieba(x_train)
-        x_test_cut = self.text_jieba(x_test)
+        x_train_cut = text_jieba(x_train)
+        x_test_cut = text_jieba(x_test)
         # 编码器处理文本标签
         le = LabelEncoder()
         y_train_le = le.fit_transform(y_train)
@@ -116,61 +115,18 @@ class MyClassificationModel(object):
                                     batch_size=32)
         return score[1]
 
-    def train_model(self, label_list, x_train, y_train, x_test, y_test):
-        """
-        训练模型
-        :param label_list: 标签列表
-        :param x_train: 训练集
-        :param y_train: 标识集，需有序列表
-        :param x_test: 测试集
-        :param y_test: 测试标识集
-        :return: 准确率,混淆矩阵,召回率
-        """
-        self.label_list = label_list
-        # 中文分词
-        x_train_cut = self.text_jieba(x_train)
-        x_test_cut = self.text_jieba(x_test)
-
-        # 编码器处理文本标签
-        le = LabelEncoder()
-        y_train_le = le.fit_transform(y_train)
-        y_test_le = le.fit_transform(y_test)
-        # 文本数据转换成数据值数据矩阵
-        self.count.fit(list(x_train_cut))
-        x_train_count = self.count.transform(x_train_cut).toarray()
-        x_test_count = self.count.transform(x_test_cut).toarray()
-
-        self.model.fit(x_train_count, y_train_le)
-
-        y_pred_model = self.model.predict(x_test_count)
-        score = metrics.accuracy_score(y_test_le, y_pred_model)  # 准确率
-        matrix = metrics.confusion_matrix(y_test_le, y_pred_model)  # 混淆矩阵
-        report = metrics.classification_report(y_test_le, y_pred_model)  # 召回率
-        # print('>>>准确率\n', score)
-        # print('\n>>>混淆矩阵\n', matrix)
-        # print('\n>>>召回率\n', report)
-        return score, matrix, report
-
-    def predict(self, msg):
+    def predict_network(self, msg):
         """
         预测分类
         :param msg:
         :return: 返回标签及概率
         """
-        msg_cut = self.text_jieba([msg])
+        msg_cut = text_jieba([msg])
         msg_count = self.count.transform(msg_cut).toarray()
-        result = self.model.predict(msg_count)[0]
-        result_proba = self.model.predict_proba(msg_count)[0][result]
+        result = self.model.predict_classes(msg_count)[0]
+        result_proba = self.model.predict(msg_count)[0][result]
 
         result_label = self.label_list[int(result)]
         return result_label, str(result_proba)
 
-    def text_jieba(self, x_text):
-        """
-        对数据进行jieba分词
-        :param x_text:
-        :return:
-        """
-        x_word = [jieba.cut(words) for words in x_text]
-        x_cut = [' '.join(word) for word in x_word]
-        return x_cut
+

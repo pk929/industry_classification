@@ -5,11 +5,31 @@
 
 # 系统包
 import random
+from sklearn.naive_bayes import MultinomialNB, GaussianNB, BernoulliNB
+from sklearn.neural_network import MLPClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.naive_bayes import BernoulliNB
+from sklearn.naive_bayes import GaussianNB
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import AdaBoostClassifier
+
+from sklearn import svm
+
+import pandas as pd
+from keras import models
+from keras import layers
+from keras.utils.np_utils import to_categorical
+
 
 # 自定义包
 from common import *
-from classify_utils.classification_utils import *
+from classify_utils.classification_model_utils import MyClassificationModel
+from classify_utils.classification_network_model_utils import MyClassificationNetworkModel
 from mapper import *
+
 
 def __train_keyword_network_model(model):
     """
@@ -51,6 +71,7 @@ def __train_keyword_network_model(model):
     log.info(score)
     log.info("训练时间:")
     log.info(end_time - start_time)
+
 
 def __train_industry_keyword_model(model):
     """
@@ -117,80 +138,88 @@ def get_industry_keyword_model(stop_list):
     :param stop_list: 停用词列表
     :return:
     """
-    model = MultinomialNB(alpha=0.001)
+    model = MultinomialNB(alpha=0.001)  # 多项式朴素贝叶斯
+    # model = RandomForestClassifier()  # 随机森林算法
     myClassificationModel = MyClassificationModel(model=model, stop_list=stop_list)
     __train_industry_keyword_model(model=myClassificationModel)
     return myClassificationModel
 
-def my_keyword_model_test(stop_list):
-    """
+# def my_keyword_model_test(stop_list):
+#     """
+#
+#     :param stop_list:
+#     :return:
+#     """
+#     # log.info("_____________1-k近邻算法")
+#     # knc = KNeighborsClassifier()
+#     # knc_model = MyClassificationModel(model=knc, stop_list=stop_list)
+#     # __train_industry_keyword_model(model=knc_model)
+#     #
+#     # log.info("_____________2决策树")
+#     # dtc = DecisionTreeClassifier()
+#     # dtc_model = MyClassificationModel(model=dtc, stop_list=stop_list)
+#     # __train_industry_keyword_model(model=dtc_model)
+#     #
+#     # log.info("_____________3多层感知器")
+#     # mlpc = MLPClassifier()
+#     # mlpc_model = MyClassificationModel(model=mlpc, stop_list=stop_list)
+#     # __train_industry_keyword_model(model=mlpc_model)
+#     #
+#     # log.info("_____________4伯努力贝叶斯算法")
+#     # bnb = BernoulliNB()
+#     # bnb_model = MyClassificationModel(model=bnb, stop_list=stop_list)
+#     # __train_industry_keyword_model(model=bnb_model)
+#     #
+#     # log.info("_____________5高斯贝叶斯")
+#     # gnb = GaussianNB()
+#     # gnb_model = MyClassificationModel(model=gnb, stop_list=stop_list)
+#     # __train_industry_keyword_model(model=gnb_model)
+#     #
+#     # log.info("_____________6多项式朴素贝叶斯")
+#     # mnb = MultinomialNB(alpha=0.001)
+#     # mnb_model = MyClassificationModel(model=mnb, stop_list=stop_list)
+#     # __train_industry_keyword_model(model=mnb_model)
+#
+#     log.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+#     log.info("_____________9随机森林算法")
+#     rfc = RandomForestClassifier()
+#     rfc_model = MyClassificationModel(model=rfc, stop_list=stop_list)
+#     __train_industry_keyword_model(model=rfc_model)
+#
+#     log.info("_____________7逻辑回归算法")
+#     lgr = LogisticRegression()
+#     lgr_model = MyClassificationModel(model=lgr, stop_list=stop_list)
+#     __train_industry_keyword_model(model=lgr_model)
+#
+#     # log.info("_____________8支持向量机算法")
+#     # svc = svm.SVC()
+#     # svc_model = MyClassificationModel(model=svc, stop_list=stop_list)
+#     # __train_industry_keyword_model(model=svc_model)
+#
+#
+#
+#     log.info("_____________10自增强算法")
+#     abc = AdaBoostClassifier()
+#     abc_model = MyClassificationModel(model=abc, stop_list=stop_list)
+#     __train_industry_keyword_model(model=abc_model)
 
-    :param stop_list:
-    :return:
-    """
-    # log.info("_____________1-k近邻算法")
-    # knc = KNeighborsClassifier()
-    # knc_model = MyClassificationModel(model=knc, stop_list=stop_list)
-    # __train_industry_keyword_model(model=knc_model)
-    #
-    # log.info("_____________2决策树")
-    # dtc = DecisionTreeClassifier()
-    # dtc_model = MyClassificationModel(model=dtc, stop_list=stop_list)
-    # __train_industry_keyword_model(model=dtc_model)
-    #
-    # log.info("_____________3多层感知器")
-    # mlpc = MLPClassifier()
-    # mlpc_model = MyClassificationModel(model=mlpc, stop_list=stop_list)
-    # __train_industry_keyword_model(model=mlpc_model)
-    #
-    # log.info("_____________4伯努力贝叶斯算法")
-    # bnb = BernoulliNB()
-    # bnb_model = MyClassificationModel(model=bnb, stop_list=stop_list)
-    # __train_industry_keyword_model(model=bnb_model)
-    #
-    # log.info("_____________5高斯贝叶斯")
-    # gnb = GaussianNB()
-    # gnb_model = MyClassificationModel(model=gnb, stop_list=stop_list)
-    # __train_industry_keyword_model(model=gnb_model)
-    #
-    # log.info("_____________6多项式朴素贝叶斯")
-    # mnb = MultinomialNB(alpha=0.001)
-    # mnb_model = MyClassificationModel(model=mnb, stop_list=stop_list)
-    # __train_industry_keyword_model(model=mnb_model)
 
-    log.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-    log.info("_____________9随机森林算法")
-    rfc = RandomForestClassifier()
-    rfc_model = MyClassificationModel(model=rfc, stop_list=stop_list)
-    __train_industry_keyword_model(model=rfc_model)
-
-    log.info("_____________7逻辑回归算法")
-    lgr = LogisticRegression()
-    lgr_model = MyClassificationModel(model=lgr, stop_list=stop_list)
-    __train_industry_keyword_model(model=lgr_model)
-
-    # log.info("_____________8支持向量机算法")
-    # svc = svm.SVC()
-    # svc_model = MyClassificationModel(model=svc, stop_list=stop_list)
-    # __train_industry_keyword_model(model=svc_model)
-
-
-
-    log.info("_____________10自增强算法")
-    abc = AdaBoostClassifier()
-    abc_model = MyClassificationModel(model=abc, stop_list=stop_list)
-    __train_industry_keyword_model(model=abc_model)
-
-
-def my_keyword_model_test2(stop_list):
+def get_industry_keyword_network_model(stop_list):
     """
     模型预测
     :param stop_list:
     :return:
     """
     # 1 创建神经网络
+    from keras import models
+    from keras import layers
+    from keras.utils.np_utils import to_categorical
+
     network = models.Sequential()
-    network_model = MyClassificationModel(model=network, stop_list=stop_list)
+
+    network_model = MyClassificationNetworkModel(model=network, stop_list=stop_list)
     __train_keyword_network_model(network_model)
+
+    return network_model
 
 

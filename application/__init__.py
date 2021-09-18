@@ -20,8 +20,8 @@ from common.flask_log import Log
 from config.flask_scheduler_config import FlaskSchedulerConfig
 from common import *
 
-from classify_utils.industry_title_model import get_industry_title_model, my_industry_model_test, my_industry_model_test2
-from classify_utils.industry_keyword_model import get_industry_keyword_model, my_keyword_model_test, my_keyword_model_test2
+from classify_utils.industry_title_model import get_industry_title_model
+from classify_utils.industry_keyword_model import get_industry_keyword_network_model
 
 baseConfig = Config()
 flask_config = FlaskConfig()
@@ -63,9 +63,9 @@ __stop_list = stopwordslist("text_similarity_modular/date/stopWord.txt")
 
 
 # 加载行业关键词分类算法
-my_keyword_model_test2(__stop_list)
-my_keyword_model_test(__stop_list)
-# industry_keyword_model = get_industry_keyword_model(__stop_list)
+# my_keyword_model_test2(__stop_list)
+# my_keyword_model_test(__stop_list)
+industry_keyword_model = get_industry_keyword_network_model(__stop_list)
 
 
 # 加载标题分类算法模型
