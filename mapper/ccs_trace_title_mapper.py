@@ -15,6 +15,6 @@ class CcsTraceTitleMapper(object):
 
     # I_CCS_TRACE_TITLE = "INSERT INTO `ccs_trace_title` (`id`, `trace`, `title`, `description`, `keywords`, `company_id`, `update_time`) VALUES (NULL, :trace, :title, :description, :keywords, :company_id, NOW())"
 
-    I_CCS_TRACE_TITLE = "INSERT INTO `ccs_trace_title` (`id`, `trace`, `title`, `company_id`, `update_time`) VALUES (NULL, :trace, :title, :company_id, NOW())"
+    I_CCS_TRACE_TITLE = "INSERT INTO `ccs_trace_title` (`id`, `trace`, `title`, `company_id`) VALUES (NULL, :trace, :title, :company_id)"
 
 
